@@ -1,0 +1,5 @@
+FROM jenkins/jenkins:2.387.1-lts-jdk11
+
+ENV PLUGINS_FORCE_UPGRADE=true
+
+RUN jenkins-plugin-cli --plugins github

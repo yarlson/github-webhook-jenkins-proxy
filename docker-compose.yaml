@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  jenkins:
+    build:
+      context: infra
+      dockerfile: Dockerfile.jenkins
+    container_name: jenkins
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    restart: unless-stopped
+
+  proxy:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile
+    container_name: webhook_proxy
+    ports:
+      - "8081:8080"
+    environment:
+      - GITHUB_WEBHOOK_SECRET=your_secret_here
+      - JENKINS_URL=http://jenkins:8080
+    depends_on:
+      - jenkins
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
